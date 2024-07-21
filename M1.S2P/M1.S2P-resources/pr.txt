@@ -1,0 +1,9 @@
+### Pre-requisites
+Read the following C++ tutorials (specialy if you're new to C++ programming):
+https://www.cplusplus.com/doc/tutorial/program_structure/
+https://www.cplusplus.com/doc/tutorial/variables/
+https://www.cplusplus.com/doc/tutorial/functions/
+https://www.cplusplus.com/doc/tutorial/arrays/
+https://www.cplusplus.com/doc/tutorial/ntcs/
+https://www.cplusplus.com/doc/tutorial/pointers/
+https://www.cplusplus.com/doc/tutorial/structures/
