@@ -4,6 +4,7 @@
 #include <chrono>   // 用于时间测量
 #include <fstream>  // 用于文件操作
 #include <pthread.h>  // 用于pthread多线程编程
+#include <thread>
 
 using namespace std;
 using namespace std::chrono;
@@ -79,8 +80,8 @@ void printMatrixToFile(const vector<vector<int>>& matrix, int N, const string& f
 }
 
 int main() {
-    int N = 1000;  // 矩阵大小，可以根据需要更改
-    int numThreads = 4;  // 线程数
+    int N = 1000;  // 矩阵大小
+    int numThreads = 4; // 线程数
     vector<vector<int>> A(N, vector<int>(N));
     vector<vector<int>> B(N, vector<int>(N));
     vector<vector<int>> C(N, vector<int>(N));
@@ -101,8 +102,8 @@ int main() {
     auto stop = high_resolution_clock::now();
 
     // 计算所用时间
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken for matrix multiplication (pthreads): " << duration.count() << " microseconds." << endl;
+    auto duration = duration_cast<seconds>(stop - start);
+    cout << "Time taken for matrix multiplication (pthreads): " << duration.count() << " seconds." << endl;
 
     // 将结果矩阵C输出到文件
     printMatrixToFile(C, N, "matrix_output_pthread.txt");

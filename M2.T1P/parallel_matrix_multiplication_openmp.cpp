@@ -1,12 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>  // 用于生成随机数
-#include <chrono>   // 用于时间测量
-#include <fstream>  // 用于文件操作
 #include <omp.h>    // 用于OpenMP并行编程
+#include <fstream>  // 用于文件操作
 
 using namespace std;
-using namespace std::chrono;
 
 // 初始化矩阵的函数，使用随机值填充矩阵
 void initializeMatrix(vector<vector<int>>& matrix, int N) {
@@ -43,7 +41,7 @@ void printMatrixToFile(const vector<vector<int>>& matrix, int N, const string& f
 }
 
 int main() {
-    int N = 1000;  // 矩阵大小，可以根据需要更改
+    int N = 1000;  // 矩阵大小
     vector<vector<int>> A(N, vector<int>(N));
     vector<vector<int>> B(N, vector<int>(N));
     vector<vector<int>> C(N, vector<int>(N));
@@ -54,18 +52,18 @@ int main() {
     initializeMatrix(A, N);
     initializeMatrix(B, N);
 
-    // 使用std::chrono记录开始时间
-    auto start = high_resolution_clock::now();
+    // 使用omp_get_wtime记录开始时间
+    double start = omp_get_wtime();
 
     // 使用OpenMP进行矩阵乘法，计算矩阵C
     multiplyMatricesOpenMP(A, B, C, N);
 
-    // 使用std::chrono记录结束时间
-    auto stop = high_resolution_clock::now();
+    // 使用omp_get_wtime记录结束时间
+    double end = omp_get_wtime();
 
     // 计算所用时间
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken for matrix multiplication (OpenMP): " << duration.count() << " microseconds." << endl;
+    double duration = end - start;
+    cout << "Time taken for matrix multiplication (OpenMP): " << duration << " seconds." << endl;
 
     // 将结果矩阵C输出到文件
     printMatrixToFile(C, N, "matrix_output_openmp.txt");
