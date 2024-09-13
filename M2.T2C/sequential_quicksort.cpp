@@ -58,7 +58,7 @@ int main() {
     // 计算运行时间
     auto duration = duration_cast<milliseconds>(end - start);
 
-    cout << "顺序版 QuickSort 运行时间: " << duration.count() << " 毫秒" << endl;
+    cout << "Sequential QuickSort runtime: " << duration.count() << " ms" << endl;
 
     return 0;
 }
