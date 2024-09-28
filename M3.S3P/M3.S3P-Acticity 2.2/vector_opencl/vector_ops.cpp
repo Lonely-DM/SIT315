@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#define CL_TARGET_OPENCL_VERSION 300
 #include <CL/cl.h>
 
 #define PRINT 1
@@ -7,34 +9,34 @@
 int SZ = 8;
 int *v;
 
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL device to execute the kernel on (e.g., CPU or GPU)
 cl_mem bufV;
 
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL memory object for storing the vector data on the device
 cl_device_id device_id;
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL memory object for storing the vector data on the device
 cl_context context;
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL memory object for storing the vector data on the device
 cl_program program;
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL memory object for storing the vector data on the device
 cl_kernel kernel;
-//ToDo: Add comment (what is the purpose of this variable)
+// OpenCL memory object for storing the vector data on the device
 cl_command_queue queue;
 cl_event event = NULL;
 
 int err;
 
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 cl_device_id create_device();
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 void setup_openCL_device_context_queue_kernel(char *filename, char *kernelname);
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 cl_program build_program(cl_context ctx, cl_device_id dev, const char *filename);
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 void setup_kernel_memory();
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 void copy_kernel_args();
-//ToDo: Add comment (what is the purpose of this function)
+// Creates and returns an OpenCL device for kernel execution
 void free_memory();
 
 void init(int *&A, int size);
@@ -48,7 +50,7 @@ int main(int argc, char **argv)
     init(v, SZ);
 
 
-    //ToDo: Add comment (what is the purpose of this variable)
+    // OpenCL memory object for storing the vector data on the device
     size_t global[1] = {(size_t)SZ};
 
     //initial vector
@@ -59,11 +61,13 @@ int main(int argc, char **argv)
     setup_kernel_memory();
     copy_kernel_args();
 
-    //ToDo: Add comment (what is the purpose of this function? What are its arguments? Check the documenation to find more https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueNDRangeKernel.html)
+    // clEnqueueNDRangeKernel schedules the execution of a kernel on the OpenCL device. 
+    // It takes the command queue, kernel object, number of dimensions, global and local work sizes, and synchronization events as arguments.
     clEnqueueNDRangeKernel(queue, kernel, 1, NULL, global, NULL, 0, NULL, &event);
     clWaitForEvents(1, &event);
 
-    //ToDo: Add comment (what is the purpose of this function? What are its arguments?)
+    // clEnqueueReadBuffer reads the results from the device memory (bufV) back to the host (v). 
+    // Arguments: command queue, buffer object, blocking mode, offset, size of data, pointer to the host memory, event wait list, and event.
     clEnqueueReadBuffer(queue, bufV, CL_TRUE, 0, SZ * sizeof(int), &v[0], 0, NULL, NULL);
 
     //result vector
@@ -130,7 +134,8 @@ void free_memory()
 
 void copy_kernel_args()
 {
-    //ToDo: Add comment (what is the purpose of clSetKernelArg function? What are its arguments?)
+    // clSetKernelArg sets the arguments for the kernel. 
+    // Arguments: kernel object, argument index, size of the argument, and pointer to the argument value.
     clSetKernelArg(kernel, 0, sizeof(int), (void *)&SZ);
     clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&bufV);
 
@@ -144,8 +149,9 @@ void copy_kernel_args()
 
 void setup_kernel_memory()
 {
-    //ToDo: Add comment (what is the purpose of clCreateBuffer function? What are its arguments?) 
-    //The second parameter of the clCreateBuffer is cl_mem_flags flags. Check the OpenCL documention to find out what is it's purpose and read the List of supported memory flag values 
+    // clCreateBuffer creates a memory buffer object on the device. 
+    // Arguments: context, memory flags, size of buffer, host pointer (optional), and error code.
+    // The second parameter, cl_mem_flags, defines the usage of the buffer (e.g., read-write or read-only).
     bufV = clCreateBuffer(context, CL_MEM_READ_WRITE, SZ * sizeof(int), NULL, NULL);
 
     // Copy matrices to the GPU
@@ -157,7 +163,8 @@ void setup_openCL_device_context_queue_kernel(char *filename, char *kernelname)
     device_id = create_device();
     cl_int err;
 
-    //ToDo: Add comment (what is the purpose of clCreateBuffer function?)
+    // clCreateContext creates an OpenCL context, which manages devices and resources.
+    // Arguments: properties, number of devices, list of devices, error callback, user data, and error code.
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &err);
     if (err < 0)
     {
@@ -167,7 +174,8 @@ void setup_openCL_device_context_queue_kernel(char *filename, char *kernelname)
 
     program = build_program(context, device_id, filename);
 
-    //ToDo: Add comment (what is the purpose of clCreateCommandQueueWithProperties function?)
+    // clCreateCommandQueueWithProperties creates a command queue for the device.
+    // Arguments: context, device, queue properties, and error code.
     queue = clCreateCommandQueueWithProperties(context, device_id, 0, &err);
     if (err < 0)
     {
@@ -208,7 +216,7 @@ cl_program build_program(cl_context ctx, cl_device_id dev, const char *filename)
     fread(program_buffer, sizeof(char), program_size, program_handle);
     fclose(program_handle);
 
-    //ToDo: Add comment (what is the purpose of clCreateProgramWithSource function? What are its arguments?)
+    // clCreateProgramWithSource creates an OpenCL program object from source code. It takes the context, number of strings, an array of source code strings, and their lengths as arguments.
     program = clCreateProgramWithSource(ctx, 1,
                                         (const char **)&program_buffer, &program_size, &err);
     if (err < 0)
